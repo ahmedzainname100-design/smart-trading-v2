@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a101d">
+  <meta name="description" content="Smart Trading — منصة عربية لمتابعة الأسواق وتحليل الذهب وأدوات إدارة المخاطر.">
+  <title>Smart Trading | التحليل والأسواق</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>window.SMART_TRADING_CONFIG = { apiConfigured: {{ 'true' if api_configured else 'false' }} };</script>
+  <script src="https://s3.tradingview.com/tv.js" defer></script>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#overview" aria-label="Smart Trading الرئيسية">
+        <span class="brand-mark">ST<span>↗</span></span>
+        <span class="brand-copy"><strong>SMART TRADING</strong><small>MARKET INTELLIGENCE</small></span>
+      </a>
+      <div class="side-label">مساحة التداول</div>
+      <nav class="side-nav" aria-label="التنقل الرئيسي">
+        <a class="nav-link active" href="#overview"><span class="nav-icon">▦</span> نظرة عامة</a>
+        <a class="nav-link" href="#markets"><span class="nav-icon">↗</span> الأسواق</a>
+        <a class="nav-link" href="#chart-section"><span class="nav-icon">⌁</span> الشارت والتحليل</a>
+        <a class="nav-link" href="#gold-analysis"><span class="nav-icon">◈</span> تحليل الذهب</a>
+        <a class="nav-link" href="#tools"><span class="nav-icon">⚒</span> أدوات التداول</a>
+        <a class="nav-link" href="#risk-tool"><span class="nav-icon">◎</span> إدارة المخاطر</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="status-card"><span class="status-dot"></span><div><strong>حالة المنصة</strong><small id="connection-status">جارٍ فحص الاتصال...</small></div></div>
+        <div class="sidebar-note">بيانات السوق قد تكون متأخرة وفقًا لمصدر البيانات والباقة المستخدمة.</div>
+      </div>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar">
+        <div class="topbar-start"><button class="icon-button menu-toggle" id="menu-toggle" aria-label="فتح القائمة">☰</button><div><div class="eyebrow">لوحة معلومات الأسواق</div><h1>نظرة عامة على السوق</h1></div></div>
+        <div class="topbar-actions"><div class="market-status"><span class="status-dot"></span><span id="top-status">متصل بالمنصة</span></div><div class="date-chip" id="current-date">—</div></div>
+      </header>
+
+      <section class="welcome-row">
+        <div><p class="welcome-kicker">مرحبًا بك في</p><h2>Smart Trading <span>— قرارات أوضح، ورؤية أعمق.</span></h2><p class="muted">تابع حركة الأسواق، حلّل الاتجاهات، واحسب مخاطرتك من لوحة واحدة.</p></div>
+        <a class="primary-button" href="#chart-section">ابدأ التحليل <span>←</span></a>
+      </section>
+
+      <div class="notice" id="data-notice" role="status"><span class="notice-icon">ⓘ</span><span id="notice-text">يتم تجهيز بيانات السوق...</span><button class="notice-close" id="notice-close" aria-label="إخفاء التنبيه">×</button></div>
+
+      <section class="section-block" id="markets">
+        <div class="section-heading"><div><div class="eyebrow">MARKET WATCH</div><h2>الأسواق الرئيسية</h2></div><button class="subtle-button" id="refresh-market">↻ تحديث الأسعار</button></div>
+        <div class="market-grid" id="market-grid">
+          <article class="market-card skeleton"><div class="skeleton-line"></div><div class="skeleton-line wide"></div><div class="skeleton-line"></div></article>
+          <article class="market-card skeleton"><div class="skeleton-line"></div><div class="skeleton-line wide"></div><div class="skeleton-line"></div></article>
+          <article class="market-card skeleton"><div class="skeleton-line"></div><div class="skeleton-line wide"></div><div class="skeleton-line"></div></article>
+        </div>
+        <p class="section-footnote">الأسعار الحية تتطلب إعداد مفتاح مزود بيانات. عند غياب المفتاح، تُعرض قيم توضيحية بعلامة واضحة ولا تُعد أسعارًا فعلية.</p>
+      </section>
+
+      <section class="section-block chart-section" id="chart-section">
+        <div class="section-heading"><div><div class="eyebrow">TECHNICAL ANALYSIS</div><h2>الشارت والتحليل الفني</h2><p class="muted small">اختر السوق والفاصل الزمني من أدوات الشارت.</p></div><div class="chart-controls"><label class="sr-only" for="chart-symbol">السوق</label><select id="chart-symbol"><option value="OANDA:XAUUSD">الذهب XAUUSD</option><option value="OANDA:XAGUSD">الفضة XAGUSD</option><option value="OANDA:EURUSD">EUR/USD</option><option value="OANDA:GBPUSD">GBP/USD</option><option value="OANDA:USDJPY">USD/JPY</option><option value="COINBASE:BTCUSD">Bitcoin</option></select><label class="sr-only" for="chart-interval">الفاصل الزمني</label><select id="chart-interval"><option value="5">5 دقائق</option><option value="15">15 دقيقة</option><option value="60">ساعة</option><option value="240">4 ساعات</option><option value="D" selected>يومي</option><option value="W">أسبوعي</option></select></div></div>
+        <div class="chart-card"><div class="chart-topline"><div><span class="live-badge"><span class="status-dot"></span> شارت تفاعلي</span><strong id="chart-title">الذهب مقابل الدولار</strong></div><span class="provider-label">TradingView</span></div><div id="tradingview-chart" class="tradingview-chart"><div class="chart-placeholder">جارٍ تحميل الشارت التفاعلي...</div></div></div>
+      </section>
+
+      <section class="section-block" id="gold-analysis">
+        <div class="section-heading"><div><div class="eyebrow">GOLD DESK</div><h2>مركز تحليل الذهب</h2></div><span class="section-tag">XAU / USD</span></div>
+        <div class="gold-grid">
+          <article class="panel gold-price-panel"><div class="panel-title"><span class="gold-icon">Au</span><div><h3>الذهب الفوري</h3><p class="muted small">XAU/USD · دولار أمريكي</p></div></div><div class="gold-price" id="gold-price">—</div><div class="gold-change" id="gold-change">بانتظار بيانات السعر</div><div class="divider"></div><div class="metric-row"><span>مصدر البيانات</span><strong id="gold-source">—</strong></div><div class="metric-row"><span>آخر تحديث</span><strong id="gold-updated">—</strong></div><button class="outline-button full-width" id="open-gold-chart">فتح شارت الذهب</button></article>
+          <article class="panel analysis-panel"><div class="panel-title"><div><h3>قراءة فنية إرشادية</h3><p class="muted small">مؤشرات محسوبة من حركة الشارت عند توفرها</p></div><span class="analysis-badge">للمعلومات فقط</span></div><div class="signal-row"><div class="signal-label"><span>الاتجاه العام</span><small>EMA 20 / EMA 50</small></div><strong class="signal-value neutral" id="trend-value">غير متاح</strong></div><div class="signal-row"><div class="signal-label"><span>مؤشر القوة النسبية RSI</span><small>فترة 14</small></div><strong class="signal-value neutral" id="rsi-value">—</strong></div><div class="signal-row"><div class="signal-label"><span>الزخم</span><small>MACD مبسط</small></div><strong class="signal-value neutral" id="momentum-value">غير متاح</strong></div><div class="analysis-disclaimer">لا يتم إنشاء توصيات شراء أو بيع تلقائية. استخدم بيانات وسيطك وتحقق من المستويات قبل اتخاذ أي قرار.</div></article>
+          <article class="panel levels-panel"><div class="panel-title"><div><h3>مستويات السعر</h3><p class="muted small">أعلى وأدنى نطاق حديث من الشموع المتاحة</p></div></div><div class="level-line"><span>مقاومة تقريبية</span><strong id="resistance-level">—</strong></div><div class="level-track"><span class="track-marker resistance-marker"></span></div><div class="level-line"><span>السعر الحالي</span><strong id="level-current">—</strong></div><div class="level-track current-track"><span class="track-marker current-marker"></span></div><div class="level-line"><span>دعم تقريبي</span><strong id="support-level">—</strong></div><p class="muted tiny">المستويات تقريبية من بيانات الشموع وليست ضمانًا لارتداد السعر.</p></article>
+        </div>
+      </section>
+
+      <section class="section-block" id="tools">
+        <div class="section-heading"><div><div class="eyebrow">TRADING TOOLKIT</div><h2>أدوات التداول</h2></div><span class="section-tag">مفتوحة مجانًا</span></div>
+        <div class="tools-grid">
+          <article class="panel tool-panel"><div class="tool-heading"><span class="tool-icon">⌗</span><div><h3>حاسبة النقاط</h3><p class="muted small">احسب فرق السعر بالنقاط</p></div></div><div class="form-grid two-cols"><label>سعر الدخول<input id="pip-entry" type="number" step="any" value="3980"></label><label>سعر الخروج<input id="pip-exit" type="number" step="any" value="3990"></label><label>حجم النقطة<input id="pip-size" type="number" min="0.00000001" step="any" value="0.01"></label></div><div class="result-box"><span>فرق السعر بالنقاط</span><strong id="pip-result">1000 نقطة</strong></div><p class="muted tiny">حجم النقطة يختلف حسب الأداة والوسيط. النتيجة فرق سعري وليست قيمة نقدية موحدة.</p></article>
+          <article class="panel tool-panel" id="risk-tool"><div class="tool-heading"><span class="tool-icon">◉</span><div><h3>حاسبة إدارة المخاطر</h3><p class="muted small">تقدير حجم الصفقة بناءً على المخاطرة</p></div></div><div class="form-grid two-cols"><label>رصيد الحساب ($)<input id="risk-balance" type="number" min="0" step="any" value="10000"></label><label>المخاطرة (%)<input id="risk-percent" type="number" min="0" max="100" step="any" value="1"></label><label>سعر الدخول<input id="risk-entry" type="number" min="0" step="any" value="3980"></label><label>وقف الخسارة<input id="risk-stop" type="number" min="0" step="any" value="3970"></label><label class="full-span">قيمة حركة السعر لكل لوت ($)<input id="risk-value" type="number" min="0.000001" step="any" value="100"></label></div><div class="result-grid"><div class="result-box"><span>مبلغ المخاطرة</span><strong id="risk-cash">$100.00</strong></div><div class="result-box"><span>حجم الصفقة التقديري</span><strong id="risk-lots">0.10 لوت</strong></div></div><p class="muted tiny">قيمة الحركة تختلف حسب عقد الوسيط. تحقّق من مواصفات الرمز قبل استخدام الناتج.</p></article>
+          <article class="panel tool-panel"><div class="tool-heading"><span class="tool-icon">↗</span><div><h3>حاسبة الربح والخسارة</h3><p class="muted small">تقدير الربح أو الخسارة المحتملة</p></div></div><div class="form-grid two-cols"><label>سعر الدخول<input id="pl-entry" type="number" step="any" value="3980"></label><label>سعر الخروج<input id="pl-exit" type="number" step="any" value="4000"></label><label>الحجم (لوت)<input id="pl-lots" type="number" min="0" step="any" value="0.10"></label><label>قيمة الحركة لكل لوت ($)<input id="pl-value" type="number" min="0" step="any" value="100"></label><label class="full-span">الاتجاه<select id="pl-direction"><option value="buy">شراء (Buy)</option><option value="sell">بيع (Sell)</option></select></label></div><div class="result-box"><span>النتيجة التقديرية</span><strong id="pl-result">+$200.00</strong></div><p class="muted tiny">لا تشمل العمولة أو السبريد أو السواب أو الانزلاق السعري.</p></article>
+          <article class="panel tool-panel"><div class="tool-heading"><span class="tool-icon">⇄</span><div><h3>حاسبة العائد إلى المخاطرة</h3><p class="muted small">قارن الهدف بوقف الخسارة</p></div></div><div class="form-grid two-cols"><label>سعر الدخول<input id="rr-entry" type="number" step="any" value="3980"></label><label>وقف الخسارة<input id="rr-stop" type="number" step="any" value="3970"></label><label>الهدف<input id="rr-target" type="number" step="any" value="4010"></label><label>الاتجاه<select id="rr-direction"><option value="buy">شراء (Buy)</option><option value="sell">بيع (Sell)</option></select></label></div><div class="result-box"><span>نسبة العائد إلى المخاطرة</span><strong id="rr-result">1 : 3.00</strong></div><div class="rr-bar"><span id="rr-bar-fill"></span></div><p class="muted tiny" id="rr-note">النسبة حسابية ولا تعني احتمال تحقيق الهدف.</p></article>
+        </div>
+      </section>
+
+      <footer class="footer"><a class="footer-brand" href="#overview">SMART TRADING</a><span>منصة معلومات وتحليل — ليست وسيطًا ماليًا ولا تقدم نصيحة استثمارية.</span><a href="#overview">العودة للأعلى ↑</a></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

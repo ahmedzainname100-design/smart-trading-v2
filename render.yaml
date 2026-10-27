@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: smart-trading
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --threads 4 --timeout 30
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: TWELVE_DATA_API_KEY
+        sync: false
+      - key: MARKET_DATA_CACHE_SECONDS
+        value: "30"
