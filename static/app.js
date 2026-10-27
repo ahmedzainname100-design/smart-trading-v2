@@ -260,9 +260,53 @@
       console.warn('Technical readout unavailable:', error);
     }
   }
+  function finite(id) { return finiteInput(id); }
+  function calculateFibonacci() {
+    const high = finite('fib-high'), low = finite('fib-low');
+    if (![high, low].every(Number.isFinite) || high <= low) { $('fib-236').textContent = 'تحقق من القمة والقاع'; $('fib-618').textContent = '—'; return; }
+    const range = high - low;
+    const up = $('fib-direction').value === 'up';
+    const level = (ratio) => up ? high - range * ratio : low + range * ratio;
+    $('fib-236').textContent = `${number(level(.236), 4)} / ${number(level(.382), 4)}`;
+    $('fib-618').textContent = `${number(level(.5), 4)} / ${number(level(.618), 4)}`;
+  }
+  function calculateGann() {
+    const base = finite('gann-base'), unit = finite('gann-unit'), bars = finite('gann-bars');
+    if (![base, unit, bars].every(Number.isFinite) || unit <= 0 || bars < 1) { $('gann-result').textContent = 'تحقق من المدخلات'; return; }
+    $('gann-result').textContent = number(base + ($('gann-direction').value === 'up' ? 1 : -1) * unit * bars, 4);
+  }
+  function calculateCycles() {
+    const raw = $('cycle-date').value, days = finite('cycle-days'), count = finite('cycle-count');
+    if (!raw || !Number.isFinite(days) || !Number.isFinite(count) || days < 1 || count < 1) { $('cycle-result').textContent = 'تحقق من المدخلات'; return; }
+    const start = new Date(`${raw}T12:00:00`);
+    const dates = [];
+    for (let i = 1; i <= Math.min(24, Math.floor(count)); i += 1) {
+      const d = new Date(start); d.setDate(d.getDate() + Math.floor(days) * i);
+      dates.push(d.toLocaleDateString('en-CA'));
+    }
+    $('cycle-result').textContent = dates.join(' · ');
+  }
+  function calculatePivots() {
+    const h = finite('pivot-high'), l = finite('pivot-low'), c = finite('pivot-close');
+    if (![h, l, c].every(Number.isFinite) || h < l) { $('pivot-p').textContent = 'تحقق من H/L/C'; $('pivot-rs').textContent = '—'; return; }
+    const p = (h + l + c) / 3, r1 = 2 * p - l, s1 = 2 * p - h;
+    $('pivot-p').textContent = number(p, 4);
+    $('pivot-rs').textContent = `${number(r1, 4)} / ${number(s1, 4)}`;
+  }
+  function bindExtendedTools() {
+    ['fib-high','fib-low'].forEach(id => $(id).addEventListener('input', calculateFibonacci));
+    $('fib-direction').addEventListener('change', calculateFibonacci);
+    ['gann-base','gann-unit','gann-bars'].forEach(id => $(id).addEventListener('input', calculateGann));
+    $('gann-direction').addEventListener('change', calculateGann);
+    ['cycle-date','cycle-days','cycle-count'].forEach(id => $(id).addEventListener('input', calculateCycles));
+    ['pivot-high','pivot-low','pivot-close'].forEach(id => $(id).addEventListener('input', calculatePivots));
+    calculateFibonacci(); calculateGann(); calculateCycles(); calculatePivots();
+  }
+
   function init() {
     $('current-date').textContent = new Intl.DateTimeFormat('ar-AE', { dateStyle: 'medium' }).format(new Date());
     bindCalculatorInputs();
+    bindExtendedTools();
     calculateAll();
     loadMarket();
     loadTechnicalReadout();
